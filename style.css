@@ -259,8 +259,10 @@ body {
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
   mask-position: center;
-  -webkit-mask-size: 35% auto;
-  mask-size: 35% auto;
+  /* …остальные стили… */
+  --mask-max: 21vw; /* выберите нужный предел */
+  -webkit-mask-size: min(35%, var(--mask-max)) auto;
+  mask-size: min(35%, var(--mask-max)) auto;
   -moz-mask-image: url('SOURCE/PRAGMATICS BIG TXT/PRAGATICS.png');
   -moz-mask-repeat: no-repeat;
   -moz-mask-position: center;
