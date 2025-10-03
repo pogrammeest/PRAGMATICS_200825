@@ -1,0 +1,47 @@
+.app-navigation {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 24px;
+  z-index: 500;
+  font-family: 'Arial Black', Arial, sans-serif;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.page-transition {
+  min-height: 100vh;
+}
+
+.app-navigation a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.app-navigation a.active,
+.app-navigation a:hover {
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+}
+
+.about-body .app-navigation a {
+  color: rgba(17, 24, 39, 0.55);
+  text-shadow: none;
+}
+
+.about-body .app-navigation a.active,
+.about-body .app-navigation a:hover {
+  color: #111827;
+  text-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .app-navigation {
+    top: 16px;
+    gap: 16px;
+    letter-spacing: 0.15em;
+  }
+}
