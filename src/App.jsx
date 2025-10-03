@@ -24,7 +24,7 @@ const App = () => {
   const [isPreloaderVisible, setIsPreloaderVisible] = useState(true)
 
   useEffect(() => {
-    const t = window.setTimeout(() => setIsLoading(false), 4_000)
+    const t = window.setTimeout(() => setIsLoading(false), 4_400)
     return () => window.clearTimeout(t)
   }, [])
 
