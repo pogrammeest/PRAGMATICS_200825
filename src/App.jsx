@@ -60,21 +60,40 @@ const App = () => {
     }
   }, [])
 
-  useEffect(() => {
-    let timeoutId
 
-    if (!isLoading) {
-      timeoutId = window.setTimeout(() => {
-        setIsPreloaderVisible(false)
-      }, 800)
+  const MIN_PRELOADER_MS = 2500;
+  
+  useEffect(() => {
+    let fadeTimeout;
+    let safetyTimeout;
+    const startedAt = Date.now();
+
+    const finishLoading = () => {
+      if (fadeTimeout) return;
+
+      if (safetyTimeout) window.clearTimeout(safetyTimeout);
+
+      const elapsed = Date.now() - startedAt;
+      const wait = Math.max(0, MIN_PRELOADER_MS - elapsed);
+
+      // +400мс — на плавное «выцветание» прелоадера
+      fadeTimeout = window.setTimeout(() => setIsLoading(false), wait + 400);
+    };
+
+    safetyTimeout = window.setTimeout(finishLoading, 8000); // «аварийное» снятие
+
+    if (document.readyState === 'complete') {
+      finishLoading();
+    } else {
+      window.addEventListener('load', finishLoading);
     }
 
     return () => {
-      if (timeoutId) {
-        window.clearTimeout(timeoutId)
-      }
-    }
-  }, [isLoading])
+      window.removeEventListener('load', finishLoading);
+      if (fadeTimeout) window.clearTimeout(fadeTimeout);
+      if (safetyTimeout) window.clearTimeout(safetyTimeout);
+    };
+}, []);
 
   return (
     <>
