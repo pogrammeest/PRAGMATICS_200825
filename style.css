@@ -2,7 +2,6 @@
 
 /* === Настраиваемые длительности/скорости === */
 :root{
-  --preloader-rise: 5s;
   --preloader-fade: 0.8s;
   --wave-speed-1: 6s;
   --wave-speed-2: 9s;
@@ -63,24 +62,15 @@ body.preloader-active {
 }
 
 
-.preloader__water-container,
-.preloader__wave {
-  transform-box: fill-box;     /* ключевая строка */
-}
-
 
 /* ====== ВОДА ВНУТРИ ТЕКСТА ====== */
-/* Подъём уровня */
-.preloader__water-container{
-  transform-origin: center bottom;
-  transform: translateY(60%) scaleY(0);
-  animation: preloaderWaterRise var(--preloader-rise) cubic-bezier(.32,.02,.25,1) forwards .3s;
+.preloader__water-level {
+  fill: #3d9ff5;
+  opacity: 0.85;
 }
 
 /* Бегущие волны — видны только внутри маски текста (см. JSX) */
-.preloader__wave { will-change: transform; }
-
-.preloader__wave{ will-change: transform; }
+.preloader__wave { will-change: transform; transform-box: fill-box; }
 @keyframes waveX {
   from { transform: translateX(0); }
   to   { transform: translateX(-160px); } /* ширина тайла */
@@ -91,12 +81,6 @@ body.preloader-active {
 
 .preloader__water {
   opacity: 0.95; /* если нужен дополнительный белый слой */
-}
-
-@keyframes preloaderWaterRise{
-  0%{ transform: translateY(60%) scaleY(0); }
-  60%{ transform: translateY(6%)  scaleY(.92); }
-  100%{ transform: translateY(0)   scaleY(1); }
 }
 
 /* @media (prefers-reduced-motion: reduce) {

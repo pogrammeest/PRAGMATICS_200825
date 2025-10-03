@@ -7,6 +7,14 @@ const Preloader = ({ isClosing = false }) => {
 
   const textId = `${uid}-wordmark`
   const maskId = `${uid}-mask`
+  const clipId = `${uid}-clip`
+
+  const RISE_DURATION = 5
+  const RISE_DELAY = 0.3
+  const WAVE_ONE_START_Y = VB_HEIGHT * 0.56
+  const WAVE_ONE_END_Y = VB_HEIGHT * 0.08
+  const WAVE_TWO_START_Y = VB_HEIGHT * 0.61
+  const WAVE_TWO_END_Y = VB_HEIGHT * 0.12
   const waveTileId = `${uid}-wave-tile`
 
   // размеры в одном месте (чтобы не забыть поменять в нескольких тегах)
@@ -55,6 +63,11 @@ const Preloader = ({ isClosing = false }) => {
               <use href={`#${textId}`} fill="#fff" />
             </mask>
 
+            {/* Альтернативный clipPath — так анимации работают в Safari/Firefox */}
+            <clipPath id={clipId} clipPathUnits="userSpaceOnUse">
+              <use href={`#${textId}`} />
+            </clipPath>
+
             {/* Тайловая волна (userSpaceOnUse!) */}
             <pattern id={waveTileId} width="160" height="60" patternUnits="userSpaceOnUse">
               <path
@@ -74,24 +87,69 @@ const Preloader = ({ isClosing = false }) => {
           <use className="preloader__svg-outline" href={`#${textId}`} />
 
           {/* Вода видна только внутри текста */}
-          <g className="preloader__water-container" mask={`url(#${maskId})`}>
+          <g
+            className="preloader__water-container"
+            mask={`url(#${maskId})`}
+            clipPath={`url(#${clipId})`}
+          >
+            <rect
+              className="preloader__water-level"
+              x="0"
+              y={VB_HEIGHT}
+              width={VB_WIDTH}
+              height={VB_HEIGHT}
+            >
+              <animate
+                attributeName="y"
+                values={`${VB_HEIGHT};${VB_HEIGHT * 0.12};0`}
+                keyTimes="0;0.6;1"
+                dur={`${RISE_DURATION}s`}
+                begin={`${RISE_DELAY}s`}
+                fill="freeze"
+              />
+              <animate
+                attributeName="height"
+                values={`0;${VB_HEIGHT * 0.88};${VB_HEIGHT}`}
+                keyTimes="0;0.6;1"
+                dur={`${RISE_DURATION}s`}
+                begin={`${RISE_DELAY}s`}
+                fill="freeze"
+              />
+            </rect>
+
             <g className="preloader__wave preloader__wave--one">
               <rect
                 x={-VB_WIDTH}
-                y={VB_HEIGHT * 0.56}        // позиция уровня
+                y={WAVE_ONE_START_Y}        // позиция уровня
                 width={VB_WIDTH * 2.2}
                 height="80"
                 fill={`url(#${waveTileId})`}
+              />
+              <animate
+                attributeName="y"
+                values={`${WAVE_ONE_START_Y};${WAVE_ONE_END_Y};${WAVE_ONE_END_Y}`}
+                keyTimes="0;0.6;1"
+                dur={`${RISE_DURATION}s`}
+                begin={`${RISE_DELAY}s`}
+                fill="freeze"
               />
             </g>
 
             <g className="preloader__wave preloader__wave--two">
               <rect
                 x={-VB_WIDTH}
-                y={VB_HEIGHT * 0.61}
+                y={WAVE_TWO_START_Y}
                 width={VB_WIDTH * 2.2}
                 height="80"
                 fill={`url(#${waveTileId})`}
+              />
+              <animate
+                attributeName="y"
+                values={`${WAVE_TWO_START_Y};${WAVE_TWO_END_Y};${WAVE_TWO_END_Y}`}
+                keyTimes="0;0.6;1"
+                dur={`${RISE_DURATION}s`}
+                begin={`${RISE_DELAY}s`}
+                fill="freeze"
               />
             </g>
           </g>
