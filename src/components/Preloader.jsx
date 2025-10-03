@@ -42,8 +42,16 @@ const Preloader = ({ isClosing = false }) => {
             </text>
 
             {/* Маска: белое видно */}
-            <mask id={maskId}>
-              <rect width="100%" height="100%" fill="#000" />
+            <mask
+              id={maskId}
+              maskUnits="userSpaceOnUse"
+              maskContentUnits="userSpaceOnUse"
+              x="0"
+              y="0"
+              width={VB_WIDTH}
+              height={VB_HEIGHT}
+            >
+              <rect width={VB_WIDTH} height={VB_HEIGHT} fill="#000" />
               <use href={`#${textId}`} fill="#fff" />
             </mask>
 
