@@ -24,76 +24,18 @@ const App = () => {
   const [isPreloaderVisible, setIsPreloaderVisible] = useState(true)
 
   useEffect(() => {
-    let fadeTimeout
-    let safetyTimeout
-
-    const finishLoading = () => {
-      if (fadeTimeout) {
-        return
-      }
-
-      if (safetyTimeout) {
-        window.clearTimeout(safetyTimeout)
-      }
-
-      fadeTimeout = window.setTimeout(() => {
-        setIsLoading(false)
-      }, 400)
-    }
-
-    safetyTimeout = window.setTimeout(finishLoading, 5000)
-
-    if (document.readyState === 'complete') {
-      finishLoading()
-    } else {
-      window.addEventListener('load', finishLoading)
-    }
-
-    return () => {
-      window.removeEventListener('load', finishLoading)
-      if (fadeTimeout) {
-        window.clearTimeout(fadeTimeout)
-      }
-      if (safetyTimeout) {
-        window.clearTimeout(safetyTimeout)
-      }
-    }
+    const t = window.setTimeout(() => setIsLoading(false), 4_000)
+    return () => window.clearTimeout(t)
   }, [])
 
-
-  const MIN_PRELOADER_MS = 2500;
-  
+  // плавное скрытие прелоадера после isLoading=false
   useEffect(() => {
-    let fadeTimeout;
-    let safetyTimeout;
-    const startedAt = Date.now();
-
-    const finishLoading = () => {
-      if (fadeTimeout) return;
-
-      if (safetyTimeout) window.clearTimeout(safetyTimeout);
-
-      const elapsed = Date.now() - startedAt;
-      const wait = Math.max(0, MIN_PRELOADER_MS - elapsed);
-
-      // +400мс — на плавное «выцветание» прелоадера
-      fadeTimeout = window.setTimeout(() => setIsLoading(false), wait + 400);
-    };
-
-    safetyTimeout = window.setTimeout(finishLoading, 8000); // «аварийное» снятие
-
-    if (document.readyState === 'complete') {
-      finishLoading();
-    } else {
-      window.addEventListener('load', finishLoading);
+    let timeoutId
+    if (!isLoading) {
+      timeoutId = window.setTimeout(() => setIsPreloaderVisible(false), 800)
     }
-
-    return () => {
-      window.removeEventListener('load', finishLoading);
-      if (fadeTimeout) window.clearTimeout(fadeTimeout);
-      if (safetyTimeout) window.clearTimeout(safetyTimeout);
-    };
-}, []);
+    return () => timeoutId && window.clearTimeout(timeoutId)
+  }, [isLoading])
 
   return (
     <>
@@ -102,22 +44,8 @@ const App = () => {
         <Navigation />
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
-            <Route
-              path="/"
-              element={
-                <PageTransition>
-                  <LandingPage />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/about"
-              element={
-                <PageTransition>
-                  <AboutPage />
-                </PageTransition>
-              }
-            />
+            <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
+            <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
           </Routes>
         </AnimatePresence>
       </div>

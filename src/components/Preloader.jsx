@@ -73,28 +73,38 @@ const Preloader = ({ isClosing = false }) => {
           {/* Контур текста для читабельности */}
           <use className="preloader__svg-outline" href={`#${textId}`} />
 
-          {/* Вода видна только внутри текста */}
           <g className="preloader__water-container" mask={`url(#${maskId})`}>
-            <g className="preloader__wave preloader__wave--one">
-              <rect
-                x={-VB_WIDTH}
-                y={VB_HEIGHT * 0.56}        // позиция уровня
-                width={VB_WIDTH * 2.2}
-                height="80"
-                fill={`url(#${waveTileId})`}
-              />
-            </g>
+            {/* Поднимаемая группа: сразу ставим ниже текста */}
+            <g className="preloader__rise" transform={`translate(0 ${VB_HEIGHT})`}>
+              <rect x="0" y="0" width={VB_WIDTH} height={VB_HEIGHT} fill="transparent" />
 
-            <g className="preloader__wave preloader__wave--two">
-              <rect
-                x={-VB_WIDTH}
-                y={VB_HEIGHT * 0.61}
-                width={VB_WIDTH * 2.2}
-                height="80"
-                fill={`url(#${waveTileId})`}
+              {/* базовая заливка снизу (необязательно) */}
+              <rect x="0" y={VB_HEIGHT * 0.62} width={VB_WIDTH} height={VB_HEIGHT} fill="#fff" opacity="0.95" />
+
+              {/* волны */}
+              <g className="preloader__wave preloader__wave--one">
+                <rect x={-VB_WIDTH} y={VB_HEIGHT * 0.56} width={VB_WIDTH * 2.4} height="80" fill={`url(#${waveTileId})`} />
+              </g>
+              <g className="preloader__wave preloader__wave--two">
+                <rect x={-VB_WIDTH} y={VB_HEIGHT * 0.60} width={VB_WIDTH * 2.4} height="80" fill={`url(#${waveTileId})`} />
+              </g>
+
+              {/* Анимация подъёма: из той же стартовой позиции */}
+              <animateTransform
+                attributeName="transform"
+                type="translate"
+                from={`0 ${VB_HEIGHT}`}
+                to={`0 ${-VB_HEIGHT}`}
+                dur="5s"
+                begin="0s"      /* старт сразу */
+                fill="freeze"
+                calcMode="linear"
               />
             </g>
           </g>
+
+
+
         </svg>
       </div>
     </div>
