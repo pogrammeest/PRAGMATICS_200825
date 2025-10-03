@@ -13,13 +13,22 @@ const LandingPage = () => {
   }, [])
 
   useEffect(() => {
-    let isCancelled = false
+    let cleanupLogo = null
+    let isMounted = true
 
     const loadLogoAnimation = async () => {
       try {
-        await import('../../logo3d.js')
+        const module = await import('../../logo3d.js')
+        if (!isMounted) {
+          return
+        }
+
+        const initializer = module.initializeLogo3d || module.default
+        if (typeof initializer === 'function') {
+          cleanupLogo = initializer()
+        }
       } catch (error) {
-        if (!isCancelled) {
+        if (isMounted) {
           console.error('Failed to load logo animation', error)
         }
       }
@@ -28,7 +37,10 @@ const LandingPage = () => {
     loadLogoAnimation()
 
     return () => {
-      isCancelled = true
+      isMounted = false
+      if (typeof cleanupLogo === 'function') {
+        cleanupLogo()
+      }
     }
   }, [])
 
