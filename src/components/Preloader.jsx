@@ -7,6 +7,8 @@ const Preloader = ({ isClosing = false }) => {
 
   const textId = `${uid}-wordmark`
   const maskId = `${uid}-mask`
+  const clipPathId = `${uid}-clip`
+  const textHref = `#${textId}`
   const waveTileId = `${uid}-wave-tile`
 
   // размеры в одном месте (чтобы не забыть поменять в нескольких тегах)
@@ -25,6 +27,7 @@ const Preloader = ({ isClosing = false }) => {
           className="preloader__svg"
           viewBox={`0 0 ${VB_WIDTH} ${VB_HEIGHT}`}
           xmlns="http://www.w3.org/2000/svg"
+          xmlnsXlink="http://www.w3.org/1999/xlink"
         >
           <defs>
             {/* Текст — только для маски */}
@@ -42,10 +45,23 @@ const Preloader = ({ isClosing = false }) => {
             </text>
 
             {/* Маска: белое видно */}
-            <mask id={maskId}>
-              <rect width="100%" height="100%" fill="#000" />
-              <use href={`#${textId}`} fill="#fff" />
+            <mask
+              id={maskId}
+              maskUnits="userSpaceOnUse"
+              maskContentUnits="userSpaceOnUse"
+              x="0"
+              y="0"
+              width={VB_WIDTH}
+              height={VB_HEIGHT}
+              {...{ 'mask-type': 'alpha' }}
+            >
+              <rect width={VB_WIDTH} height={VB_HEIGHT} fill="#000" />
+              <use href={textHref} xlinkHref={textHref} fill="#fff" />
             </mask>
+
+            <clipPath id={clipPathId} clipPathUnits="userSpaceOnUse">
+              <use href={textHref} xlinkHref={textHref} />
+            </clipPath>
 
             {/* Тайловая волна (userSpaceOnUse!) */}
             <pattern id={waveTileId} width="160" height="60" patternUnits="userSpaceOnUse">
@@ -63,10 +79,21 @@ const Preloader = ({ isClosing = false }) => {
           </defs>
 
           {/* Контур текста для читабельности */}
-          <use className="preloader__svg-outline" href={`#${textId}`} />
+          <use className="preloader__svg-outline" href={textHref} xlinkHref={textHref} />
 
           {/* Вода видна только внутри текста */}
-          <g className="preloader__water-container" mask={`url(#${maskId})`}>
+          <g
+            className="preloader__water-container"
+            mask={`url(#${maskId})`}
+            clipPath={`url(#${clipPathId})`}
+          >
+            <rect
+              className="preloader__water-fill"
+              x="0"
+              y="0"
+              width={VB_WIDTH}
+              height={VB_HEIGHT}
+            />
             <g className="preloader__wave preloader__wave--one">
               <rect
                 x={-VB_WIDTH}
