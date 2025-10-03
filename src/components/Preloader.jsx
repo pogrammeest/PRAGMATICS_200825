@@ -6,7 +6,7 @@ const Preloader = ({ isClosing = false }) => {
   const uid = raw.replace(/[^a-zA-Z0-9_-]/g, '')   // убираем двоеточия и т.п.
 
   const textId = `${uid}-wordmark`
-  const maskId = `${uid}-mask`
+  const clipId = `${uid}-clip`
   const waveTileId = `${uid}-wave-tile`
 
   // размеры в одном месте (чтобы не забыть поменять в нескольких тегах)
@@ -27,7 +27,7 @@ const Preloader = ({ isClosing = false }) => {
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            {/* Текст — только для маски */}
+            {/* Текст — база для clipPath и обводки */}
             <text
               id={textId}
               x="50%"
@@ -41,11 +41,10 @@ const Preloader = ({ isClosing = false }) => {
               PRAGMATICS
             </text>
 
-            {/* Маска: белое видно */}
-            <mask id={maskId}>
-              <rect width="100%" height="100%" fill="#000" />
-              <use href={`#${textId}`} fill="#fff" />
-            </mask>
+            {/* Ограничиваем область заливки по контуру текста */}
+            <clipPath id={clipId} clipPathUnits="userSpaceOnUse">
+              <use href={`#${textId}`} />
+            </clipPath>
 
             {/* Тайловая волна (userSpaceOnUse!) */}
             <pattern id={waveTileId} width="160" height="60" patternUnits="userSpaceOnUse">
@@ -66,26 +65,33 @@ const Preloader = ({ isClosing = false }) => {
           <use className="preloader__svg-outline" href={`#${textId}`} />
 
           {/* Вода видна только внутри текста */}
-          <g className="preloader__water-container" mask={`url(#${maskId})`}>
-            <g className="preloader__wave preloader__wave--one">
-              <rect
-                x={-VB_WIDTH}
-                y={VB_HEIGHT * 0.56}        // позиция уровня
-                width={VB_WIDTH * 2.2}
-                height="80"
-                fill={`url(#${waveTileId})`}
-              />
-            </g>
+          <g className="preloader__water-container" clipPath={`url(#${clipId})`}>
+            <rect
+              className="preloader__fill"
+              x="0"
+              y={VB_HEIGHT * 0.55}
+              width={VB_WIDTH}
+              height={VB_HEIGHT * 0.45}
+              fill="#fff"
+            />
 
-            <g className="preloader__wave preloader__wave--two">
-              <rect
-                x={-VB_WIDTH}
-                y={VB_HEIGHT * 0.61}
-                width={VB_WIDTH * 2.2}
-                height="80"
-                fill={`url(#${waveTileId})`}
-              />
-            </g>
+            <rect
+              className="preloader__wave preloader__wave--one"
+              x={-VB_WIDTH}
+              y={VB_HEIGHT * 0.56}
+              width={VB_WIDTH * 2.2}
+              height="80"
+              fill={`url(#${waveTileId})`}
+            />
+
+            <rect
+              className="preloader__wave preloader__wave--two"
+              x={-VB_WIDTH}
+              y={VB_HEIGHT * 0.61}
+              width={VB_WIDTH * 2.2}
+              height="80"
+              fill={`url(#${waveTileId})`}
+            />
           </g>
         </svg>
       </div>

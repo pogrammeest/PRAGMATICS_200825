@@ -64,7 +64,8 @@ body.preloader-active {
 
 
 .preloader__water-container,
-.preloader__wave {
+.preloader__wave,
+.preloader__fill {
   transform-box: fill-box;     /* ключевая строка */
 }
 
@@ -80,7 +81,9 @@ body.preloader-active {
 /* Бегущие волны — видны только внутри маски текста (см. JSX) */
 .preloader__wave { will-change: transform; }
 
-.preloader__wave{ will-change: transform; }
+.preloader__fill {
+  will-change: transform;
+}
 @keyframes waveX {
   from { transform: translateX(0); }
   to   { transform: translateX(-160px); } /* ширина тайла */
