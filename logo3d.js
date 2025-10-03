@@ -18,8 +18,8 @@ function loadImage(path) {
 
 async function loadMaskImage(index) {
   const num = String(index).padStart(5, '0')
-  const primaryPath = `SOURCE/ELEMENT_3D/ELEMENT 3D_${num}.webp`
-  const fallbackPath = `SOURCE/ELEMENT 3D/ELEMENT 3D_${num}.png`
+  const primaryPath = `/SOURCE/ELEMENT_3D/ELEMENT 3D_${num}.webp`
+  const fallbackPath = `/SOURCE/ELEMENT 3D/ELEMENT 3D_${num}.png`
 
   try {
     return await loadImage(primaryPath)
@@ -229,6 +229,7 @@ function initializeLogo3d({ canvasId = 'logo3d', videoId = 'logoVideo' } = {}) {
   const canvasFilterSupported = isCanvasFilterSupported()
   let destroyed = false
   let rafId = null
+  let waitId = null
   let masksReady = false
 
   ensureMasksLoaded()
@@ -397,7 +398,12 @@ function initializeLogo3d({ canvasId = 'logo3d', videoId = 'logoVideo' } = {}) {
     }
 
     if (!masksReady || video.readyState < 2) {
-      rafId = window.requestAnimationFrame(safeRender)
+      if (waitId === null) {
+        waitId = window.requestAnimationFrame(() => {
+          waitId = null
+          safeRender()
+        })
+      }
       return
     }
 
@@ -464,6 +470,11 @@ function initializeLogo3d({ canvasId = 'logo3d', videoId = 'logoVideo' } = {}) {
     destroyed = true
     if (rafId !== null) {
       window.cancelAnimationFrame(rafId)
+      rafId = null
+    }
+    if (waitId !== null) {
+      window.cancelAnimationFrame(waitId)
+      waitId = null
     }
     listeners.forEach((remove) => remove())
     listeners.length = 0
